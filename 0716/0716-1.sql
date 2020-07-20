@@ -19,7 +19,7 @@ Custid integer NOT NULL,
 Bookid integer NOT NULL,
 Saleprice integer,
 Orderdate date,
-FOREIGN KEY (custid) REFERENCES Newcustomer(custid)
+FOREIGN KEY (custid) REFERENCES Newcustomer(custid) on delete cascade
 );
 
 ALTER TABLE NewBook ADD isbn varchar(13);
@@ -53,11 +53,10 @@ SELECT bookid, bookname, publisher, price FROM Book WHERE publisher = '굿스포
 SELECT bookid, bookname, publisher, price FROM Book WHERE publisher != '굿스포츠' AND publisher != '대한미디어' ;
 SELECT bookname, publisher FROM Book WHERE bookname = '축구의 역사' ;
 SELECT bookname, publisher FROM Book WHERE bookname LIKE '축구%' ;
-SELECT bookid, bookname, publisher, price FROM Book WHERE bookname LIKE '_구%' ;
+SELECT bookid, bookname, publisher, price FROM Book WHERE bookname LIKE '%구%' ;
 SELECT bookid, bookname, publisher, price FROM Book WHERE bookname LIKE '축구%' AND price >= 20000 ;
 SELECT bookid, bookname, publisher, price FROM Book order by bookname;
 SELECT bookid, bookname, publisher, price FROM Book order by price, bookname;
-SELECT bookid, bookname, publisher, price FROM Book order by price desc, bookname;
 SELECT SUM(saleprice) FROM orders;
 SELECT SUM(saleprice) AS '총매출'
   FROM orders;
@@ -85,12 +84,66 @@ SELECT custid,
  WHERE saleprice >= 8000
  GROUP BY custid
  HAVING count(bookid) >= 2;  
+
+SELECT *
+  FROM Customer, Orders;
  
 SELECT * 
   FROM customer c JOIN orders o
 	ON(c.custid = o.custid)
  ORDER BY o.orderid;
    
- 
+ INSERT INTO imported_book(bookid, bookname, publisher, price)
+    SELECT bookid, bookname, publisher , price
+    FROM book;
 
+SELECT c.name,
+       o.saleprice 
+  FROM customer c JOIN orders o	
+				    ON (c.custid = o.custid);
 
+SELECT c.name,
+       SUM(o.saleprice) 
+  FROM customer c JOIN orders o	
+				    ON (c.custid = o.custid)
+ GROUP BY c.name
+ ORDER BY c.name;
+
+SELECT name,
+       bookname
+  FROM customer c, book b, orders o
+ WHERE c.custid = o.custid and o.bookid = b.bookid;
+
+SELECT name, 
+       bookname  
+  FROM customer c, book b, orders o 
+ WHERE c.custid = o.custid and o.bookid = b.bookid 
+						   and b.price=20000;
+
+SELECT name, 
+       saleprice
+  FROM customer c left outer join orders o ON c.custid = o.custid;
+
+SELECT bookname
+  FROM book
+ WHERE price = (SELECT max(price)
+				  FROM book);
+
+SELECT name 
+  FROM customer
+ WHERE custid in (SELECT custid 
+                    FROM orders);
+SELECT name 
+  FROM customer
+ WHERE custid in (SELECT custid 
+                    FROM orders
+				   WHERE bookid in (SELECT bookid 
+					                  FROM book 
+					                 WHERE publisher = '대한미디어'));   
+                                     
+SELECT b1.bookname,
+       b1.publisher
+  FROM book b1
+ WHERE b1.price > (SELECT avg(b2.price)
+                     FROM book b2
+                    WHERE b2.publisher = b1.publisher); 
