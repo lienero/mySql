@@ -1,0 +1,59 @@
+-- 회원 테이블(Member) 의 생성
+CREATE TABLE member (
+  mem_id VARCHAR(45) NOT NULL,
+  mem_pw VARCHAR(200) NOT NULL,
+  mem_email VARCHAR(45) NULL,
+  rank VARCHAR(45) NOT NULL DEFAULT 'member',
+  mem_spicy VARCHAR(30) NULL,
+  mem_filter VARCHAR(80) NULL,
+  likes VARCHAR(100) NULL,
+  PRIMARY KEY (mem_id));
+
+-- 레시피 테이블(recipe) 의 생성
+CREATE TABLE recipe (
+  recipe_seq INT NOT NULL AUTO_INCREMENT,
+  mem_id VARCHAR(45) NOT NULL,
+  recipe_name VARCHAR(300) NOT NULL,
+  recipe_contant TEXT(1000) NULL,
+  img VARCHAR(100) NULL,
+  recipe_likes INT NOT NULL DEFAULT 0,
+  recipe_spicy VARCHAR(30) NULL,
+  recipe_food VARCHAR(100) NOT NULL,
+  recipe_cate1 VARCHAR(60) NOT NULL DEFAULT 'all',
+  recipe_cate2 VARCHAR(60) NOT NULL DEFAULT 'all',
+  PRIMARY KEY (recipe_seq));
+
+-- 레시피 이미지 및 내용(recipe_img) 의 생성
+CREATE TABLE recipe_img (
+  img_seq INT NOT NULL AUTO_INCREMENT,
+  recipe_seq INT NOT NULL,
+  recipe_img VARCHAR(100) NULL,
+  img_cont TEXT(1000) NULL,
+  PRIMARY KEY (img_seq));
+
+— 댓글 테이블 (comment) 의 생성
+CREATE TABLE comment (
+  con_seq INT NOT NULL AUTO_INCREMENT,
+  recipe_seq INT NOT NULL,
+  mem_id VARCHAR(60) NOT NULL,
+  com_cont TEXT(1000) NOT NULL,
+  com_img VARCHAR(45) NULL,
+  com_date DATETIME(6) NOT NULL,
+  PRIMARY KEY (con_seq));
+
+— 후기 테이블 (review) 의 생성
+CREATE TABLE review (
+  review_seq INT NOT NULL AUTO_INCREMENT,
+  mem_id VARCHAR(60) NOT NULL,
+  review_kind VARCHAR(45) NOT NULL,
+  review_name VARCHAR(100) NOT NULL,
+  review_cont TEXT(1000) NOT NULL,
+  review_date DATETIME(6) NOT NULL,
+  PRIMARY KEY (review_seq));
+
+— 후기의 이미지 테이블 (review_img) 의 생성
+CREATE TABLE review_seq (
+  img_seq INT NOT NULL AUTO_INCREMENT,
+  review_seq INT NOT NULL,
+  review_img VARCHAR(60) NOT NULL,
+  PRIMARY KEY (img_seq));
